@@ -19,8 +19,9 @@ signature: v1.eyJzdWIiOiIxMjQ2NyIsImF1ZCI6ImNoYWxsZW5nZTp3aGF0LWl0LXNob3dzIiwiaW
   };
 </script>
 
-[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. Read report by report, it
-holds three problems with three different fixes. The parser fix closes only the first one.
+[#4471](/kb/incidents/4471) was marked known: one issue, one fix queued. Read report by report, it held three problems
+with three different fixes. Engineering closed #4471 on 5 October. That closes two of the problems.
+The third is still open.
 
 <ProblemTable ticket={4471} {issues} />
 
@@ -28,6 +29,14 @@ holds three problems with three different fixes. The parser fix closes only the 
 Count reports by id. The ticket export pages overlap, so some reports appear twice in
 <code>reports-4471.json</code>. The counts above count each one once.
 </Callout>
+
+## Where each problem stands
+
+| problem | state | why |
+| --- | --- | --- |
+| `parser` | fixed | `fix(dates): parse dd/mm for eu locales` |
+| `hint` | won't fix | the booking-v3 form is retired |
+| `shift` | open | neither change touches it: the dates are not swapped, they move by one day |
 
 ## The three problems
 
