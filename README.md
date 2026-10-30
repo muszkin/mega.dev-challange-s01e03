@@ -27,6 +27,11 @@ src/lib/data/       exports from the ticket system
 - A decision is never edited after it is accepted. A new record replaces it.
 - A page you add is signed: its frontmatter carries your `signature` and it ends with `<RenderStamp {signature} />`, so the desk knows who wrote it.
 
+## Rendering
+
+The export ships `src/` only. `package.json` + `vite.config.js` render it: `npm install && npm run build`
+writes static pages to `build/`. `rendered/` keeps the #4471 problems page as the desk sees it.
+
 ## Owners
 
 Support desk. Decision records: whoever signed them.

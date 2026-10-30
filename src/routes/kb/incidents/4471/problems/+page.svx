@@ -1,0 +1,67 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: Piotr Mucha
+status: proposed
+reviewed: 2026-10-30
+signature: v1.eyJzdWIiOiIxMjQ2NyIsImF1ZCI6ImNoYWxsZW5nZTp3aGF0LWl0LXNob3dzIiwiaWF0IjoxNzkzMzk1Mjg2LCJleHAiOjE3OTM0ODE2ODZ9.1kgwvW6s7I2MQEivFz4EKKA7kCKxiMIqrZ4lbijTI3M
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const issues = {
+    parser: 'https://github.com/muszkin/mega.dev-challange-s01e03/issues/1',
+    hint: 'https://github.com/muszkin/mega.dev-challange-s01e03/issues/2',
+    shift: 'https://github.com/muszkin/mega.dev-challange-s01e03/issues/3',
+  };
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. Read report by report, it
+holds three problems with three different fixes. The parser fix closes only the first one.
+
+<ProblemTable ticket={4471} {issues} />
+
+<Callout kind="warn">
+Count reports by id. The ticket export pages overlap, so some reports appear twice in
+<code>reports-4471.json</code>. The counts above count each one once.
+</Callout>
+
+## The three problems
+
+**`parser`: the shared parser reads dates month first.** All tenants on file write the day first.
+Any date with a day of 12 or less comes out with day and month swapped: booked 7 April, invite for 4 July.
+These reports came in by app or email from any tenant, or through the booking-v2 form. That form's
+hint says DD/MM, so people type the date correctly and the parser then flips it.
+
+**`hint`: booking-v3 tells people to type the month first.** Its date field prints `MM/DD/YYYY`.
+People follow the hint, and the form reads what they typed the tenant's way, day first. The swap
+happens in the form, before the parser. Only form reports from booking-v3 tenants have this
+problem. They show the same symptom as `parser`, but the bug is in a different place and needs a
+different fix: change the hint, or the way the form reads it.
+
+**`shift`: the date moves by one day.** These reports show no swap. The date lands one day early
+or late, and which day depends on where the reader is. One example: "Client in Lisbon got Tuesday.
+Client in Toronto got Monday." This looks like a time-zone conversion of the booking date. The desk
+already listed these reports as a one-day move in `desk-notes.json` but filed them under `parser`
+because of their tenant. The parser fix will not change them.
+
+## How a report is placed
+
+1. Count each report id once.
+2. If the desk read the report as a one-day move (`desk-notes.json`), it is `shift`.
+3. Otherwise the tenant decides, not intake's tag (a guess from the reporter's browser): a form report
+   from a booking-v3 tenant is `hint`, and every other report from a day-first tenant is `parser`.
+4. A report with no tenant on file is `unplaced`: read it by hand.
+
+The table runs this on every build (`#lib/kb/problems`), so new reports in the export are counted
+without anyone editing this page.
+
+## Lessons
+
+- Do not merge reports because the symptom is the same. "Wrong day" came from three places.
+- Read the bodies before you call a ticket known.
+
+<RenderStamp {signature} />
