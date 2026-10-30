@@ -45,16 +45,19 @@ different fix: change the hint, or the way the form reads it.
 **`shift`: the date moves by one day.** These reports show no swap. The date lands one day early
 or late, and which day depends on where the reader is. One example: "Client in Lisbon got Tuesday.
 Client in Toronto got Monday." This looks like a time-zone conversion of the booking date. The desk
-already listed these reports as a one-day move in `desk-notes.json` but filed them under `parser`
-because of their tenant. The parser fix will not change them.
+already listed these reports as a one-day move in `desk-notes.json`, and it counts them under `parser`
+because of their tenant. The parser fix will not change them, so they need their own ticket too.
 
-## How a report is placed
+## How a report is counted
+
+The desk's own view, as exported (`causes.ts`, the same rule as the cause table on #4471):
 
 1. Count each report id once.
-2. If the desk read the report as a one-day move (`desk-notes.json`), it is `shift`.
-3. Otherwise the tenant decides, not intake's tag (a guess from the reporter's browser): a form report
-   from a booking-v3 tenant is `hint`, and every other report from a day-first tenant is `parser`.
-4. A report with no tenant on file is `unplaced`: read it by hand.
+2. The tenant decides, not intake's tag (a guess from the reporter's browser): a form report from a
+   booking-v3 tenant is `hint`, and every other report from a day-first tenant is `parser`.
+3. A report with no tenant on file is `unplaced`: read it by hand.
+4. A report the desk read as a one-day move (`desk-notes.json`) is also counted as `shift`. It stays
+   counted under its tenant's cause as well, where the desk files it.
 
 The table runs this on every build (`#lib/kb/problems`), so new reports in the export are counted
 without anyone editing this page.

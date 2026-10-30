@@ -9,6 +9,7 @@
   let { ticket, issues }: { ticket: number; issues: Record<Problem, string> } = $props();
 
   const split = $derived(splitTicket(reports as Report[], ticket, tenantOf, notes.oneDayMove));
+  const shift = $derived(split.groups.find((g) => g.problem === 'shift')?.reports ?? 0);
 </script>
 
 <p class="sum">
@@ -35,7 +36,12 @@
   </tbody>
 </table>
 
+{#if shift}
+  <p class="note">The {shift} <code>shift</code> reports are also counted under their tenant's cause, where the desk files them.</p>
+{/if}
+
 <style>
   .sum { font-size: 1.1rem; }
   .unplaced td { background: var(--warn-bg); color: var(--warn); }
+  .note { color: var(--muted); font-size: 0.85em; }
 </style>
